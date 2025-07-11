@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Анализ Кф.</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="summary-card">
+            <label class="toggle-switch">
+                <input type="checkbox" id="aiToggle" checked>
+                <span class="slider round"></span>
+                AI анализ
+            </label>
+            <p class="avg-p green">Кф1: <span id="averagePlayer1">0.00</span></p>
+            <p class="avg-p green">Кф2: <span id="averagePlayer2">0.00</span></p>
+            <p class="winner-p blue">Победитель: Игрок <span id="winner">-</span></p>
+            <div class="prediction-box">
+                <p id="totalPrediction" class="prediction-text green"></p>
+            </div>
+            <p class="points-p white">Мин. очки: <span id="smallestPlayerPoints">0.00</span></p>
+            <p id="aiAnalysis" class="ai-analysis-text yellow"></p>
+        </div>
+
+        <h3 class="input-title">Коэфф. (5-10 гейм)</h3>
+
+        <div class="input-grid">
+            </div>
+
+        <button id="clearButton" class="clear-button">Очистить</button>
+    </div>
+
+    <div id="virtualKeyboard" class="virtual-keyboard hidden">
+        <div class="keyboard-row">
+            <button class="key" data-value="1">1</button>
+            <button class="key" data-value="2">2</button>
+            <button class="key" data-value="3">3</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key" data-value="4">4</button>
+            <button class="key" data-value="5">5</button>
+            <button class="key" data-value="6">6</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key" data-value="7">7</button>
+            <button class="key" data-value="8">8</button>
+            <button class="key" data-value="9">9</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key" data-value=".">.</button>
+            <button class="key" data-value="0">0</button>
+            <button class="key" data-value="backspace">⌫</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-done" data-value="done">Готово</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
