@@ -1,0 +1,317 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: black;
+    color: white;
+    margin: 0;
+    padding: 10px; /* Уменьшаем padding */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    /* Адаптация под узкий экран iPad в двух оконном режиме */
+    max-width: 320px; /* Ограничиваем ширину для двух оконного режима iPad */
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden; /* Отключаем прокрутку */
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Уменьшаем gap */
+}
+
+.summary-card, .input-grid {
+    background-color: rgba(128, 128, 128, 0.3);
+    border-radius: 8px; /* Немного меньше радиус */
+    padding: 10px; /* Уменьшаем padding */
+}
+
+.summary-card p, .summary-card h3 {
+    margin: 3px 0; /* Уменьшаем margin */
+    font-size: 0.9em; /* Уменьшаем размер шрифта */
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-flex; /* Используем flex для выравнивания */
+    align-items: center;
+    gap: 5px; /* Уменьшаем gap */
+    margin-bottom: 8px; /* Уменьшаем margin */
+    font-size: 0.9em; /* Уменьшаем размер шрифта */
+    color: white;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: relative; /* Изменено на relative, чтобы не влияло на другие элементы */
+    display: inline-block; /* Теперь это блочный элемент в потоке */
+    width: 40px; /* Уменьшаем размер свитча */
+    height: 24px; /* Уменьшаем размер свитча */
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+    flex-shrink: 0; /* Чтобы свитч не сжимался */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Уменьшаем размер кружка */
+    width: 18px; /* Уменьшаем размер кружка */
+    left: 3px; /* Немного уменьшаем отступ */
+    bottom: 3px; /* Немного уменьшаем отступ */
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50; /* Green */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px); /* Корректируем смещение */
+}
+
+.avg-p {
+    font-size: 0.9em; /* Уменьшаем размер шрифта */
+}
+
+.winner-p {
+    font-size: 0.9em; /* Уменьшаем размер шрифта */
+}
+
+.green {
+    color: #4CAF50; /* Green */
+}
+
+.blue {
+    color: #2196F3; /* Blue */
+}
+
+.red {
+    color: #f44336; /* Red */
+}
+
+.prediction-box {
+    background-color: rgba(128, 128, 128, 0.2);
+    border-radius: 6px; /* Меньше радиус */
+    padding: 8px; /* Уменьшаем padding */
+    margin-top: 10px; /* Уменьшаем margin */
+    margin-bottom: 10px; /* Уменьшаем margin */
+}
+
+.prediction-text {
+    font-size: 1.1em; /* Уменьшаем размер шрифта */
+    text-align: center;
+    margin: 0;
+}
+
+.points-p {
+    font-size: 1em; /* Уменьшаем размер шрифта */
+    padding: 5px; /* Уменьшаем padding */
+    color: white;
+}
+
+.ai-analysis-text {
+    font-size: 0.85em; /* Уменьшаем размер шрифта */
+    padding: 5px; /* Уменьшаем padding */
+    color: #FFEB3B; /* Yellow */
+    text-align: center;
+}
+
+.input-title {
+    font-size: 1em; /* Уменьшаем размер шрифта */
+    color: white;
+    text-align: center;
+    margin-top: 15px; /* Уменьшаем margin */
+    margin-bottom: 5px; /* Уменьшаем margin */
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Уменьшаем gap */
+    padding: 3px 0; /* Уменьшаем padding */
+}
+
+.input-row.highlight {
+    background-color: rgba(255, 235, 59, 0.3); /* Yellow highlight */
+    border-radius: 4px;
+    padding: 3px 5px; /* Adjusted padding for highlight */
+}
+
+.game-label {
+    color: white;
+    width: 50px; /* Немного уменьшаем ширину */
+    text-align: left;
+    font-size: 0.85em; /* Уменьшаем размер шрифта */
+    flex-shrink: 0;
+}
+
+input[type="text"] {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Меньше радиус */
+    padding: 6px; /* Уменьшаем padding */
+    width: 60px; /* Значительно уменьшаем ширину */
+    box-sizing: border-box;
+    font-size: 0.9em; /* Уменьшаем размер шрифта */
+    -webkit-appearance: none; /* Отключение стандартной клавиатуры на iOS/iPadOS */
+    -moz-appearance: none;
+    appearance: none;
+    text-align: center; /* Центрируем текст */
+}
+
+.comment {
+    font-size: 0.75em; /* Уменьшаем размер шрифта */
+    color: #FFEB3B; /* Yellow */
+    margin-top: 0; /* Убираем верхний margin */
+    margin-left: 5px; /* Минимальный отступ */
+    flex-grow: 1; /* Позволяем комментарию занимать оставшееся место */
+    text-align: right; /* Выравниваем по правому краю */
+    white-space: nowrap; /* Предотвращаем перенос строки */
+    overflow: hidden; /* Скрываем излишки */
+    text-overflow: ellipsis; /* Добавляем троеточие */
+}
+
+.clear-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 10px 15px; /* Уменьшаем padding */
+    border: none;
+    border-radius: 8px; /* Меньше радиус */
+    cursor: pointer;
+    font-size: 1em; /* Уменьшаем размер шрифта */
+    width: 100%;
+    margin-top: 15px; /* Уменьшаем margin */
+}
+
+.clear-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Виртуальная клавиатура */
+.virtual-keyboard {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 8px; /* Уменьшаем padding */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    max-width: 320px; /* Ограничение ширины для клавиатуры */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.virtual-keyboard.hidden {
+    display: none;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 8px; /* Уменьшаем margin */
+}
+
+.virtual-keyboard button {
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 4px; /* Меньше радиус */
+    padding: 12px; /* Уменьшаем padding */
+    font-size: 1.3em; /* Уменьшаем размер шрифта */
+    cursor: pointer;
+    flex: 1;
+    margin: 0 4px; /* Уменьшаем margin */
+    touch-action: manipulation;
+}
+
+.virtual-keyboard button:active {
+    background-color: #777;
+}
+
+.key-done {
+    background-color: #4CAF50 !important;
+}
+
+/* Медиа-запросы для iPad в двух оконном режиме */
+@media (max-width: 320px) {
+    body {
+        padding: 5px; /* Минимальный padding для самых узких экранов */
+    }
+
+    .container {
+        gap: 8px; /* Еще меньше gap */
+    }
+
+    .summary-card, .input-grid {
+        padding: 8px; /* Еще меньше padding */
+    }
+
+    .toggle-switch {
+        font-size: 0.85em; /* Еще меньше шрифт */
+    }
+
+    .avg-p, .winner-p, .points-p {
+        font-size: 0.85em; /* Еще меньше шрифт */
+    }
+
+    .prediction-text {
+        font-size: 1em; /* Еще меньше шрифт */
+    }
+
+    .ai-analysis-text {
+        font-size: 0.8em; /* Еще меньше шрифт */
+    }
+
+    .input-title {
+        font-size: 0.9em; /* Еще меньше шрифт */
+        margin-top: 10px; /* Еще меньше margin */
+        margin-bottom: 3px;
+    }
+
+    .game-label {
+        width: 45px; /* Еще меньше ширина */
+        font-size: 0.8em; /* Еще меньше шрифт */
+    }
+
+    input[type="text"] {
+        width: 55px; /* Еще меньше ширина */
+        font-size: 0.85em; /* Еще меньше шрифт */
+        padding: 5px;
+    }
+
+    .comment {
+        font-size: 0.7em; /* Еще меньше шрифт */
+        margin-left: 3px;
+    }
+
+    .clear-button {
+        padding: 8px 12px; /* Еще меньше padding */
+        font-size: 0.9em; /* Еще меньше шрифт */
+        margin-top: 10px;
+    }
+
+    .virtual-keyboard button {
+        padding: 10px; /* Еще меньше padding */
+        font-size: 1.2em; /* Еще меньше шрифт */
+        margin: 0 3px;
+    }
+}
