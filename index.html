@@ -3,179 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Анализ Кф. с силой геймов</title>
+    <title>Анализ коэффициентов (прематч + лайв)</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .input-table {
+            width: 100%;
+            margin: 10px 0;
+            border-collapse: collapse;
+        }
+        .input-table th, .input-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .input-table th {
+            background-color: #f2f2f2;
+        }
+        .coeff-input {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+        }
+        .section-title {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
         .strength-table {
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
         }
-        .strength-table th, .strength-table td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #444;
-        }
         .strength-table th {
-            background-color: #333;
+            background-color: #3498db;
             color: white;
         }
-        .strength-table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .strength-table tr:nth-child(odd) {
-            background-color: #ddd;
-        }
-        .deviation-positive {
+        .trend-up {
             color: #2ecc71;
             font-weight: bold;
         }
-        .deviation-negative {
+        .trend-down {
             color: #e74c3c;
             font-weight: bold;
-        }
-        .game-strength-section {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="summary-card">
-            <label class="toggle-switch">
-                <input type="checkbox" id="aiToggle" checked>
-                <span class="slider round"></span>
-                AI анализ
-            </label>
-            <p class="avg-p green">Кф1: <span id="averagePlayer1">0.00</span></p>
-            <p class="avg-p green">Кф2: <span id="averagePlayer2">0.00</span></p>
-            <p class="winner-p blue">Победитель: Игрок <span id="winner">-</span></p>
-            <div class="prediction-box">
-                <p id="totalPrediction" class="prediction-text green"></p>
+        <!-- Прематч коэффициенты (только общие) -->
+        <div class="input-section">
+            <h3 class="section-title">Прематч коэффициенты</h3>
+            <div class="prematch-inputs">
+                <div class="input-group">
+                    <label for="prematchPlayer1">Игрок 1:</label>
+                    <input type="text" id="prematchPlayer1" class="coeff-input" placeholder="1.50">
+                </div>
+                <div class="input-group">
+                    <label for="prematchPlayer2">Игрок 2:</label>
+                    <input type="text" id="prematchPlayer2" class="coeff-input" placeholder="2.50">
+                </div>
             </div>
-            <p class="points-p white">Мин. очки: <span id="smallestPlayerPoints">0.00</span></p>
-            <p id="aiAnalysis" class="ai-analysis-text yellow"></p>
         </div>
 
-        <h3 class="input-title">Коэфф. (5-10 гейм)</h3>
-
-        <div class="input-grid">
-            <!-- Динамически генерируемые поля ввода -->
-        </div>
-
-        <button id="clearButton" class="clear-button">Очистить</button>
-
-        <!-- Новый раздел для анализа силы геймов -->
-        <div class="game-strength-section">
-            <h3>Анализ силы геймов</h3>
-            <table class="strength-table" id="strengthTable">
+        <!-- Лайв коэффициенты по геймам -->
+        <div class="input-section">
+            <h3 class="section-title">Лайв коэффициенты по геймам</h3>
+            <table class="input-table" id="liveTable">
                 <thead>
                     <tr>
                         <th>Гейм</th>
-                        <th>Сила Игрока 1</th>
-                        <th>Сила Игрока 2</th>
-                        <th>Отклонение</th>
+                        <th>Игрок 1</th>
+                        <th>Игрок 2</th>
                         <th>Тенденция</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Данные будут заполняться через JavaScript -->
+                    <!-- Геймы 5-10 -->
+                    <tr>
+                        <td>5</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="5" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="5" data-player="2"></td>
+                        <td class="game-trend" data-game="5">-</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="6" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="6" data-player="2"></td>
+                        <td class="game-trend" data-game="6">-</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="7" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="7" data-player="2"></td>
+                        <td class="game-trend" data-game="7">-</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="8" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="8" data-player="2"></td>
+                        <td class="game-trend" data-game="8">-</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="9" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="9" data-player="2"></td>
+                        <td class="game-trend" data-game="9">-</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="10" data-player="1"></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="10" data-player="2"></td>
+                        <td class="game-trend" data-game="10">-</td>
+                    </tr>
                 </tbody>
             </table>
-            <div id="gameStrengthInsights" class="insights-box"></div>
         </div>
 
-        <!-- График силы геймов (опционально) -->
-        <div class="game-strength-section">
-            <h3>Динамика силы по геймам</h3>
-            <canvas id="strengthChart" width="400" height="200"></canvas>
+        <!-- Аналитическая панель -->
+        <div class="summary-card">
+            <h3 class="section-title">Анализ матча</h3>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <p>Средняя сила Игрок 1: <span id="avgStrength1">0.00</span></p>
+                    <p>Средняя сила Игрок 2: <span id="avgStrength2">0.00</span></p>
+                </div>
+                <div class="summary-item">
+                    <p>Прогноз: <span id="winnerPrediction">-</span></p>
+                    <p>Рекомендация: <span id="matchRecommendation">-</span></p>
+                </div>
+                <div class="summary-item">
+                    <p>Вероятность Игрок 1: <span id="winProbability1">50%</span></p>
+                    <p>Вероятность Игрок 2: <span id="winProbability2">50%</span></p>
+                </div>
+            </div>
         </div>
+
+        <!-- Анализ силы геймов -->
+        <div class="input-section">
+            <h3 class="section-title">Сила геймов</h3>
+            <table class="strength-table" id="strengthTable">
+                <thead>
+                    <tr>
+                        <th>Гейм</th>
+                        <th>Игрок 1</th>
+                        <th>Игрок 2</th>
+                        <th>Важность</th>
+                        <th>Фактор</th>
+                    </tr>
+                </thead>
+                <tbody id="strengthTableBody">
+                    <!-- Заполняется через JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <button id="clearButton" class="clear-button">Очистить данные</button>
     </div>
 
-    <div id="virtualKeyboard" class="virtual-keyboard hidden">
-        <div class="keyboard-row">
-            <button class="key" data-value="1">1</button>
-            <button class="key" data-value="2">2</button>
-            <button class="key" data-value="3">3</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key" data-value="4">4</button>
-            <button class="key" data-value="5">5</button>
-            <button class="key" data-value="6">6</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key" data-value="7">7</button>
-            <button class="key" data-value="8">8</button>
-            <button class="key" data-value="9">9</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key" data-value=".">.</button>
-            <button class="key" data-value="0">0</button>
-            <button class="key" data-value="backspace">⌫</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key-done" data-value="done">Готово</button>
-        </div>
-    </div>
-
-    <!-- Подключаем Chart.js для графиков -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
-    
-    <script>
-        // Инициализация графика (добавьте в ваш script.js)
-        let strengthChart = null;
-        
-        function initStrengthChart() {
-            const ctx = document.getElementById('strengthChart').getContext('2d');
-            strengthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Гейм 5', 'Гейм 6', 'Гейм 7', 'Гейм 8', 'Гейм 9', 'Гейм 10'],
-                    datasets: [
-                        {
-                            label: 'Сила Игрока 1',
-                            data: [],
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1,
-                            fill: false
-                        },
-                        {
-                            label: 'Сила Игрока 2',
-                            data: [],
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Сила гейма'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Номер гейма'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Вызываем инициализацию при загрузке
-        document.addEventListener('DOMContentLoaded', initStrengthChart);
-    </script>
 </body>
 </html>
