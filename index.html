@@ -89,11 +89,6 @@
             margin-top: 10px;
             font-weight: bold;
         }
-        .match-header {
-            font-weight: bold;
-            color: #333;
-            margin: 15px 0 5px;
-        }
     </style>
 </head>
 <body>
@@ -113,7 +108,7 @@
             </tr>
         </table>
         
-        <!-- Лайв коэффициенты -->
+        <!-- Лайв коэффициенты (геймы 5-10) -->
         <h2>Лайв коэффициенты по геймам</h2>
         <table>
             <thead>
@@ -137,7 +132,30 @@
                     <td><input type="text" class="coeff-input" data-game="6" data-player="2" placeholder="1.85"></td>
                     <td class="game-trend">-</td>
                 </tr>
-                <!-- Добавьте строки для геймов 7-10 по аналогии -->
+                <tr>
+                    <td>7</td>
+                    <td><input type="text" class="coeff-input" data-game="7" data-player="1" placeholder="1.90"></td>
+                    <td><input type="text" class="coeff-input" data-game="7" data-player="2" placeholder="1.80"></td>
+                    <td class="game-trend">-</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><input type="text" class="coeff-input" data-game="8" data-player="1" placeholder="1.95"></td>
+                    <td><input type="text" class="coeff-input" data-game="8" data-player="2" placeholder="1.75"></td>
+                    <td class="game-trend">-</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td><input type="text" class="coeff-input" data-game="9" data-player="1" placeholder="2.00"></td>
+                    <td><input type="text" class="coeff-input" data-game="9" data-player="2" placeholder="1.70"></td>
+                    <td class="game-trend">-</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td><input type="text" class="coeff-input" data-game="10" data-player="1" placeholder="2.10"></td>
+                    <td><input type="text" class="coeff-input" data-game="10" data-player="2" placeholder="1.65"></td>
+                    <td class="game-trend">-</td>
+                </tr>
             </tbody>
         </table>
         
@@ -164,7 +182,42 @@
                 </tr>
             </thead>
             <tbody id="strengthTableBody">
-                <!-- Данные будут заполняться через JS -->
+                <tr>
+                    <td>5</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★☆☆☆☆</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★☆☆☆☆</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★★☆☆☆</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★★★☆☆</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★★★★☆</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>★★★★★</td>
+                </tr>
             </tbody>
         </table>
         
@@ -174,7 +227,26 @@
     <script>
         // Здесь будет JavaScript код для анализа
         document.addEventListener('DOMContentLoaded', function() {
-            // Ваш код обработки данных...
+            // Пример обработчика для кнопки очистки
+            document.getElementById('clearButton').addEventListener('click', function() {
+                const inputs = document.querySelectorAll('.coeff-input');
+                inputs.forEach(input => input.value = '');
+                
+                const trends = document.querySelectorAll('.game-trend');
+                trends.forEach(trend => trend.textContent = '-');
+                
+                document.getElementById('avgStrength1').textContent = '0.00';
+                document.getElementById('avgStrength2').textContent = '0.00';
+                document.getElementById('winnerPrediction').textContent = '-';
+                document.getElementById('matchRecommendation').textContent = '-';
+                document.getElementById('winProbability1').textContent = '50%';
+                document.getElementById('winProbability2').textContent = '50%';
+                
+                const strengthCells = document.querySelectorAll('#strengthTableBody td');
+                strengthCells.forEach((cell, index) => {
+                    if (index % 4 !== 0) cell.textContent = '0.00';
+                });
+            });
         });
     </script>
 </body>
