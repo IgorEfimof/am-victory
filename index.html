@@ -3,94 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анализ коэффициентов</title>
+    <title>Теннисный анализатор коэффициентов</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f5f5f5;
-            color: #333;
         }
         .container {
-            display: flex;
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
+            background-color: white;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .bookmaker-panel {
-            width: 60%;
-            background-color: white;
-            padding: 15px;
-            border-right: 1px solid #ddd;
-        }
-        .analysis-panel {
-            width: 40%;
-            background-color: white;
-            padding: 15px;
-        }
-        h1, h2, h3 {
-            color: #1a3e72;
-            margin-top: 0;
+            border-radius: 5px;
         }
         h1 {
+            color: #1a3e72;
             font-size: 24px;
+            margin-top: 0;
             padding-bottom: 10px;
             border-bottom: 2px solid #1a3e72;
         }
         h2 {
+            color: #1a3e72;
             font-size: 18px;
-            margin: 15px 0 10px;
-        }
-        h3 {
-            font-size: 16px;
-            margin: 12px 0 8px;
-            color: #2c3e50;
+            margin: 20px 0 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-        }
-        th, td {
-            padding: 8px 12px;
-            text-align: center;
-            border: 1px solid #ddd;
+            margin: 15px 0;
         }
         th {
             background-color: #1a3e72;
             color: white;
+            padding: 10px;
+            text-align: center;
             font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        .match-header {
-            font-weight: bold;
-            background-color: #e6e6e6;
+        .coeff-input {
+            width: 70px;
             padding: 8px;
-            margin: 10px 0 5px;
-        }
-        .odds {
-            font-weight: bold;
-            color: #1a3e72;
-        }
-        .input-section {
-            margin-bottom: 15px;
-        }
-        .input-group {
-            margin-bottom: 10px;
-        }
-        label {
-            display: inline-block;
-            width: 120px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            padding: 6px;
-            width: 80px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            text-align: center;
         }
         .trend-up {
             color: #27ae60;
@@ -100,150 +66,115 @@
             color: #e74c3c;
             font-weight: bold;
         }
-        .clear-button {
-            background-color: #1a3e72;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
+        .summary-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
         }
         .summary-item {
             margin-bottom: 8px;
         }
         .summary-item span {
             font-weight: bold;
+            color: #1a3e72;
+        }
+        .clear-button {
+            background-color: #1a3e72;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .match-header {
+            font-weight: bold;
+            color: #333;
+            margin: 15px 0 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Левая панель (букмекер) -->
-        <div class="bookmaker-panel">
-            <h1>ВЕТСИТИ</h1>
-            
-            <div class="match-header">Футбол. Чемпионат Европы 2025. Женщины</div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Матч</th>
-                        <th>Ф1 (-4.5)</th>
-                        <th>Ф2 (+4.5)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Англия (ж) - Уэльс (ж)</td>
-                        <td class="odds">1.00</td>
-                        <td class="odds">2.45</td>
-                    </tr>
-                    <tr>
-                        <td>4:0 (82')</td>
-                        <td colspan="2">2-й тайм</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div class="match-header">Баскетбол. NBA. Летняя лига</div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Матч</th>
-                        <th>Ф1 (-11.5)</th>
-                        <th>Ф2 (+11.5)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Э-я четверть, 05:58</td>
-                        <td class="odds">1.90</td>
-                        <td class="odds">1.90</td>
-                    </tr>
-                </tbody>
-            </table>
+        <h1>Теннисный анализатор</h1>
+        
+        <!-- Прематч коэффициенты -->
+        <h2>Прематч коэффициенты</h2>
+        <table>
+            <tr>
+                <th>Игрок 1</th>
+                <th>Игрок 2</th>
+            </tr>
+            <tr>
+                <td><input type="text" id="prematchPlayer1" class="coeff-input" placeholder="1.50"></td>
+                <td><input type="text" id="prematchPlayer2" class="coeff-input" placeholder="2.50"></td>
+            </tr>
+        </table>
+        
+        <!-- Лайв коэффициенты -->
+        <h2>Лайв коэффициенты по геймам</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Гейм</th>
+                    <th>Игрок 1</th>
+                    <th>Игрок 2</th>
+                    <th>Тенденция</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>5</td>
+                    <td><input type="text" class="coeff-input" data-game="5" data-player="1" placeholder="1.96"></td>
+                    <td><input type="text" class="coeff-input" data-game="5" data-player="2" placeholder="1.75"></td>
+                    <td class="game-trend">-</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><input type="text" class="coeff-input" data-game="6" data-player="1" placeholder="1.85"></td>
+                    <td><input type="text" class="coeff-input" data-game="6" data-player="2" placeholder="1.85"></td>
+                    <td class="game-trend">-</td>
+                </tr>
+                <!-- Добавьте строки для геймов 7-10 по аналогии -->
+            </tbody>
+        </table>
+        
+        <!-- Диагностика матча -->
+        <div class="summary-box">
+            <h2>Диагностика матча</h2>
+            <div class="summary-item">Средняя сила Игрок 1: <span id="avgStrength1">0.00</span></div>
+            <div class="summary-item">Средняя сила Игрок 2: <span id="avgStrength2">0.00</span></div>
+            <div class="summary-item">Прогноз: <span id="winnerPrediction">-</span></div>
+            <div class="summary-item">Рекомендация: <span id="matchRecommendation">-</span></div>
+            <div class="summary-item">Вероятность Игрок 1: <span id="winProbability1">50%</span></div>
+            <div class="summary-item">Вероятность Игрок 2: <span id="winProbability2">50%</span></div>
         </div>
         
-        <!-- Правая панель (наш анализ) -->
-        <div class="analysis-panel">
-            <h2>Анализ тенниса</h2>
-            
-            <div class="input-section">
-                <h3>Прематч коэффициенты</h3>
-                <div class="input-group">
-                    <label for="prematchPlayer1">Игрок 1:</label>
-                    <input type="text" id="prematchPlayer1" placeholder="1.50">
-                </div>
-                <div class="input-group">
-                    <label for="prematchPlayer2">Игрок 2:</label>
-                    <input type="text" id="prematchPlayer2" placeholder="2.50">
-                </div>
-            </div>
-            
-            <div class="input-section">
-                <h3>Лайв коэффициенты по геймам</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Гейм</th>
-                            <th>Игрок 1</th>
-                            <th>Игрок 2</th>
-                            <th>Тенденция</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>5</td>
-                            <td><input type="text" class="live-input" data-game="5" data-player="1" placeholder="1.96"></td>
-                            <td><input type="text" class="live-input" data-game="5" data-player="2" placeholder="1.75"></td>
-                            <td class="game-trend">-</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td><input type="text" class="live-input" data-game="6" data-player="1" placeholder="1.85"></td>
-                            <td><input type="text" class="live-input" data-game="6" data-player="2" placeholder="1.85"></td>
-                            <td class="game-trend">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="input-section">
-                <h3>Диагностика матча</h3>
-                <div class="summary-item">Средняя сила Игрок 1: <span id="avgStrength1">0.00</span></div>
-                <div class="summary-item">Средняя сила Игрок 2: <span id="avgStrength2">0.00</span></div>
-                <div class="summary-item">Прогноз: <span id="winnerPrediction">-</span></div>
-                <div class="summary-item">Рекомендация: <span id="matchRecommendation">-</span></div>
-                <div class="summary-item">Вероятность Игрок 1: <span id="winProbability1">50%</span></div>
-                <div class="summary-item">Вероятность Игрок 2: <span id="winProbability2">50%</span></div>
-            </div>
-            
-            <div class="input-section">
-                <h3>Сила геймов</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Гейм</th>
-                            <th>Игрок 1</th>
-                            <th>Важность</th>
-                        </tr>
-                    </thead>
-                    <tbody id="strengthTableBody">
-                        <!-- Заполняется через JS -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <button id="clearButton" class="clear-button">Очистить данные</button>
-        </div>
+        <!-- Сила геймов -->
+        <h2>Сила геймов</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Гейм</th>
+                    <th>Игрок 1</th>
+                    <th>Игрок 2</th>
+                    <th>Важность</th>
+                </tr>
+            </thead>
+            <tbody id="strengthTableBody">
+                <!-- Данные будут заполняться через JS -->
+            </tbody>
+        </table>
+        
+        <button id="clearButton" class="clear-button">Очистить данные</button>
     </div>
 
     <script>
-        // Здесь будет JavaScript код для обработки данных
+        // Здесь будет JavaScript код для анализа
         document.addEventListener('DOMContentLoaded', function() {
-            // Инициализация и обработчики событий
+            // Ваш код обработки данных...
         });
     </script>
 </body>
