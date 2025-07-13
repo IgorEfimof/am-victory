@@ -1,241 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let coefficients = Array.from({ length: 6 }, () => ["", ""]); // Поля для ввода чистые
-    let averagePlayer1 = 0;
-    let averagePlayer2 = 0;
-    let totalPrediction = "";
-    let differenceColor = "green";
-    let smallestPlayerPoints = 0;
-    let winner = 0;
-    let gameComments = Array(6).fill("");
-    let aiAnalysis = "";
-    let aiEnabled = true;
-    let winProbabilityPlayer1 = 50;
-    let winProbabilityPlayer2 = 50;
+    // Состояние приложения
+    const state = {
+        coefficients: Array.from({ length: 6 }, () => ["", ""]),
+        averages: { player1: 0, player2: 0 },
+        predictions: { total: "", color: "green", smallestPoints: 0 },
+        winner: 0,
+        gameComments: Array(6).fill(""),
+        aiAnalysis: "",
+        aiEnabled: true,
+        probabilities: { player1: 50, player2: 50 },
+        gameStrengths: Array(6).fill({ player1: 0, player2: 0 }),
+        winStreaks: { player1: 0, player2: 0 },
+        lastWinner: null
+    };
 
     // DOM Elements
-    const averagePlayer1El = document.getElementById('averagePlayer1');
-    const averagePlayer2El = document.getElementById('averagePlayer2');
-    const winnerEl = document.getElementById('winner');
-    const totalPredictionEl = document.getElementById('totalPrediction');
-    const smallestPlayerPointsEl = document.getElementById('smallestPlayerPoints');
-    const aiAnalysisEl = document.getElementById('aiAnalysis');
-    const aiToggle = document.getElementById('aiToggle');
-    const inputGrid = document.querySelector('.input-grid');
-    const clearButton = document.getElementById('clearButton');
-    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    const elements = {
+        averagePlayer1: document.getElementById('averagePlayer1'),
+        averagePlayer2: document.getElementById('averagePlayer2'),
+        winner: document.getElementById('winner'),
+        totalPrediction: document.getElementById('totalPrediction'),
+        smallestPlayerPoints: document.getElementById('smallestPlayerPoints'),
+        aiAnalysis: document.getElementById('aiAnalysis'),
+        aiToggle: document.getElementById('aiToggle'),
+        inputGrid: document.querySelector('.input-grid'),
+        clearButton: document.getElementById('clearButton'),
+        virtualKeyboard: document.getElementById('virtualKeyboard'),
+        strengthTable: document.getElementById('strengthTable')
+    };
 
-    let activeInputField = null; // To keep track of the currently focused input
+    let activeInputField = null;
 
-    // Function to format input as "X.XX" or "X.X"
-    function formatInput(input) {
-        let formatted = input.replace(/[^0-9.]/g, ''); // Удаляем все, кроме цифр и точки
-
-        // Если это первая цифра, автоматически добавляем точку
-        if (formatted.length === 1 && formatted.match(/[0-9]/)) {
-            formatted += ".";
-        }
-
-        // Ограничиваем до 4 символов
-        if (formatted.length > 4) {
-            formatted = formatted.substring(0, 4);
-        }
-
-        // Если точка в начале, добавляем 0
-        if (formatted.startsWith('.')) {
-            formatted = '0' + formatted;
-        }
-
-        // Убедимся, что нет более одной точки
-        const parts = formatted.split('.');
-        if (parts.length > 2) {
-            formatted = parts[0] + '.' + parts.slice(1).join('');
-        }
-
-        return formatted;
-    }
-
-    function calculateAverages() {
-        let totalPlayer1 = 0;
-        let totalPlayer2 = 0;
-        let validEntriesPlayer1 = 0;
-        let validEntriesPlayer2 = 0;
-
-        for (let i = 0; i < 6; i++) {
-            const player1Coeff = parseFloat(coefficients[i][0]);
-            if (!isNaN(player1Coeff) && player1Coeff > 0) {
-                totalPlayer1 += player1Coeff;
-                validEntriesPlayer1 += 1;
-            }
-            const player2Coeff = parseFloat(coefficients[i][1]);
-            if (!isNaN(player2Coeff) && player2Coeff > 0) {
-                totalPlayer2 += player2Coeff;
-                validEntriesPlayer2 += 1;
-            }
-        }
-
-        averagePlayer1 = validEntriesPlayer1 > 0 ? totalPlayer1 / validEntriesPlayer1 : 0;
-        averagePlayer2 = validEntriesPlayer2 > 0 ? totalPlayer2 / validEntriesPlayer2 : 0;
-
-        const difference = Math.abs(averagePlayer1 - averagePlayer2);
-
-        if (difference <= 0.30) {
-            totalPrediction = "ТБ 20.5";
-            differenceColor = "green";
-        } else {
-            totalPrediction = "ТМ 20.5";
-            differenceColor = "red";
-        }
-
-        const totalCoeff = averagePlayer1 + averagePlayer2;
-        const pointsPlayer1 = totalCoeff > 0 ? (averagePlayer1 / totalCoeff) * 21 : 0;
-        const pointsPlayer2 = totalCoeff > 0 ? (averagePlayer2 / totalCoeff) * 21 : 0;
-
-        smallestPlayerPoints = Math.min(pointsPlayer1, pointsPlayer2);
-        if (isNaN(smallestPlayerPoints)) smallestPlayerPoints = 0;
-
-        if (averagePlayer1 < averagePlayer2 && averagePlayer1 > 0) {
-            winner = 1;
-        } else if (averagePlayer2 < averagePlayer1 && averagePlayer2 > 0) {
-            winner = 2;
-        } else {
-            winner = 0;
-        }
-
-        detectKeyMoments();
-
-        if (aiEnabled) {
-            runAIAnalysis();
-        }
-
-        updateUI();
-    }
-
-    function detectKeyMoments() {
-        gameComments = Array(6).fill("");
-
-        for (let i = 1; i < 6; i++) {
-            const prevPlayer1 = parseFloat(coefficients[i - 1][0]);
-            const prevPlayer2 = parseFloat(coefficients[i - 1][1]);
-            const currentPlayer1 = parseFloat(coefficients[i][0]);
-            const currentPlayer2 = parseFloat(coefficients[i][1]);
-
-            if (!isNaN(prevPlayer1) && !isNaN(prevPlayer2) && !isNaN(currentPlayer1) && !isNaN(currentPlayer2) &&
-                prevPlayer1 > 0 && prevPlayer2 > 0 && currentPlayer1 > 0 && currentPlayer2 > 0) {
-
-                const changePlayer1 = Math.abs(currentPlayer1 - prevPlayer1);
-                const changePlayer2 = Math.abs(currentPlayer2 - prevPlayer2);
-
-                if (changePlayer1 > 0.40 || changePlayer2 > 0.40) {
-                    if (currentPlayer1 > prevPlayer1) { // Коэффициент вырос - теряет преимущество
-                        gameComments[i] = "Игрок 1 теряет!";
-                    } else if (currentPlayer2 > prevPlayer2) { // Коэффициент вырос - теряет преимущество
-                        gameComments[i] = "Игрок 2 теряет!";
-                    } else if (currentPlayer1 < prevPlayer1) { // Коэффициент упал - усиливает
-                        gameComments[i] = "Игрок 1 усиливает!";
-                    } else if (currentPlayer2 < prevPlayer2) { // Коэффициент упал - усиливает
-                        gameComments[i] = "Игрок 2 усиливает!";
-                    }
-                }
-            }
-        }
-    }
-
-    function runAIAnalysis() {
-        let scorePlayer1 = 0.0;
-        let scorePlayer2 = 0.0;
-        let fluctuation1 = 0; // Количество сильных изменений кф1
-        let fluctuation2 = 0; // Количество сильных изменений кф2
-        let gainMoments1 = 0; // Количество раз, когда кф1 улучшался (становился меньше)
-        let gainMoments2 = 0; // Количество раз, когда кф2 улучшался (становился меньше)
-
-        for (let i = 1; i < 6; i++) {
-            const prev1 = parseFloat(coefficients[i - 1][0]);
-            const prev2 = parseFloat(coefficients[i - 1][1]);
-            const curr1 = parseFloat(coefficients[i][0]);
-            const curr2 = parseFloat(coefficients[i][1]);
-
-            if (!isNaN(prev1) && !isNaN(prev2) && !isNaN(curr1) && !isNaN(curr2) &&
-                prev1 > 0 && prev2 > 0 && curr1 > 0 && curr2 > 0) {
-
-                const diff1 = Math.abs(curr1 - prev1);
-                const diff2 = Math.abs(curr2 - prev2);
-
-                if (diff1 > 0.3) { fluctuation1 += 1; }
-                if (diff2 > 0.3) { fluctuation2 += 1; }
-
-                if (curr1 < prev1) { gainMoments1 += 1; } // Игрок улучшает кф (становится меньше)
-                if (curr2 < prev2) { gainMoments2 += 1; } // Игрок улучшает кф (становится меньше)
-            }
-        }
-
-        // Логика AI: Чем ниже средний кф, тем лучше (умножаем на 2 для большего веса)
-        // Вычитаем флуктуации (нестабильность), добавляем моменты усиления (стабильный рост/удержание)
-        scorePlayer1 = (averagePlayer1 > 0 ? (1 / averagePlayer1) * 2 : 0) - fluctuation1 * 0.5 + gainMoments1;
-        scorePlayer2 = (averagePlayer2 > 0 ? (1 / averagePlayer2) * 2 : 0) - fluctuation2 * 0.5 + gainMoments2;
-
-        const totalScore = scorePlayer1 + scorePlayer2;
-        if (totalScore > 0) {
-            winProbabilityPlayer1 = Math.round((scorePlayer1 / totalScore) * 100);
-            winProbabilityPlayer2 = 100 - winProbabilityPlayer1;
-        } else {
-            winProbabilityPlayer1 = 50;
-            winProbabilityPlayer2 = 50;
-        }
-
-        if (scorePlayer1 > scorePlayer2) {
-            aiAnalysis = `🤖 Игрок 1: ${winProbabilityPlayer1}%`;
-        } else if (scorePlayer2 > scorePlayer1) {
-            aiAnalysis = `🤖 Игрок 2: ${winProbabilityPlayer2}%`;
-        } else {
-            aiAnalysis = "🤖 Матч равный: 50/50.";
-        }
-    }
-
-    function updateUI() {
-        averagePlayer1El.textContent = averagePlayer1.toFixed(2);
-        averagePlayer2El.textContent = averagePlayer2.toFixed(2);
-        winnerEl.textContent = winner === 1 ? "1" : winner === 2 ? "2" : "-";
-        totalPredictionEl.textContent = totalPrediction;
-        totalPredictionEl.className = `prediction-text ${differenceColor}`;
-        smallestPlayerPointsEl.textContent = smallestPlayerPoints.toFixed(2);
-        aiAnalysisEl.textContent = aiAnalysis;
-        aiAnalysisEl.style.display = aiEnabled ? 'block' : 'none';
-
-        for (let i = 0; i < 6; i++) {
-            const player1Input = document.getElementById(`player1_game${i + 5}`);
-            const player2Input = document.getElementById(`player2_game${i + 5}`);
-            const commentEl = document.getElementById(`comment_game${i + 5}`);
-            const rowEl = document.getElementById(`row_game${i + 5}`);
-
-            // Update input values from coefficients array
-            if (player1Input) player1Input.value = coefficients[i][0];
-            if (player2Input) player2Input.value = coefficients[i][1];
-
-            if (commentEl) {
-                commentEl.textContent = gameComments[i];
-                // Добавляем/убираем класс highlight только если есть комментарий
-                rowEl.classList.toggle('highlight', gameComments[i] !== "");
-            }
-        }
-    }
-
-    function clearData() {
-        coefficients = Array.from({ length: 6 }, () => ["", ""]); // Очищаем поля
-        averagePlayer1 = 0;
-        averagePlayer2 = 0;
-        totalPrediction = "";
-        differenceColor = "green";
-        smallestPlayerPoints = 0;
-        winner = 0;
-        gameComments = Array(6).fill("");
-        aiAnalysis = "";
-        winProbabilityPlayer1 = 50;
-        winProbabilityPlayer2 = 50;
+    // Инициализация
+    function init() {
+        setupInputFields();
+        setupVirtualKeyboard();
+        setupEventListeners();
         updateUI();
     }
 
     function setupInputFields() {
-        inputGrid.innerHTML = '';
+        elements.inputGrid.innerHTML = '';
         for (let i = 0; i < 6; i++) {
             const rowDiv = document.createElement('div');
             rowDiv.classList.add('input-row');
@@ -246,30 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             gameLabel.textContent = `Гейм ${i + 5}`;
             rowDiv.appendChild(gameLabel);
 
-            const input1 = document.createElement('input');
-            input1.type = 'text';
-            input1.id = `player1_game${i + 5}`;
-            input1.placeholder = 'Кф1'; // Сокращено
-            input1.dataset.row = i;
-            input1.dataset.col = 0;
-            input1.setAttribute('inputmode', 'none'); // Отключаем нативную клавиатуру
-            input1.addEventListener('focus', (e) => {
-                activeInputField = e.target;
-                virtualKeyboard.classList.remove('hidden');
-            });
+            const input1 = createInputField(i, 0);
+            const input2 = createInputField(i, 1);
+            
             rowDiv.appendChild(input1);
-
-            const input2 = document.createElement('input');
-            input2.type = 'text';
-            input2.id = `player2_game${i + 5}`;
-            input2.placeholder = 'Кф2'; // Сокращено
-            input2.dataset.row = i;
-            input2.dataset.col = 1;
-            input2.setAttribute('inputmode', 'none'); // Отключаем нативную клавиатуру
-            input2.addEventListener('focus', (e) => {
-                activeInputField = e.target;
-                virtualKeyboard.classList.remove('hidden');
-            });
             rowDiv.appendChild(input2);
 
             const commentSpan = document.createElement('p');
@@ -277,78 +62,317 @@ document.addEventListener('DOMContentLoaded', () => {
             commentSpan.id = `comment_game${i + 5}`;
             rowDiv.appendChild(commentSpan);
 
-            inputGrid.appendChild(rowDiv);
+            elements.inputGrid.appendChild(rowDiv);
         }
     }
 
-    // Virtual Keyboard Logic
-    virtualKeyboard.addEventListener('click', (e) => {
-        if (e.target.classList.contains('key') || e.target.classList.contains('key-done')) {
-            const value = e.target.dataset.value;
-            if (!activeInputField) return;
+    function createInputField(row, col) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `player${col + 1}_game${row + 5}`;
+        input.placeholder = col === 0 ? 'Кф1' : 'Кф2';
+        input.dataset.row = row;
+        input.dataset.col = col;
+        input.setAttribute('inputmode', 'none');
+        
+        input.addEventListener('focus', (e) => {
+            activeInputField = e.target;
+            elements.virtualKeyboard.classList.remove('hidden');
+        });
+        
+        return input;
+    }
 
-            let row = parseInt(activeInputField.dataset.row);
-            let col = parseInt(activeInputField.dataset.col);
+    function setupVirtualKeyboard() {
+        elements.virtualKeyboard.addEventListener('click', (e) => {
+            if (!activeInputField) return;
+            
+            const value = e.target.dataset.value;
+            const row = parseInt(activeInputField.dataset.row);
+            const col = parseInt(activeInputField.dataset.col);
 
             if (value === 'backspace') {
                 activeInputField.value = activeInputField.value.slice(0, -1);
             } else if (value === 'done') {
-                activeInputField.blur(); // Hide keyboard explicitly
-                virtualKeyboard.classList.add('hidden'); // Ensure it's hidden
-                activeInputField = null; // Clear active field
-                return; // Stop further processing
+                activeInputField.blur();
+                elements.virtualKeyboard.classList.add('hidden');
+                activeInputField = null;
+                return;
             } else {
-                let currentVal = activeInputField.value;
-                // Автоматическая точка после первой цифры, если ее еще нет
-                if (currentVal.length === 1 && currentVal.match(/[0-9]/) && value !== '.' && !currentVal.includes('.')) {
-                    activeInputField.value += '.' + value;
-                } else if (currentVal.length < 4) { // Ограничение на 4 символа
-                    activeInputField.value += value;
-                }
+                handleInputValue(value, row, col);
             }
             
-            // Update the coefficients array and recalculate
-            coefficients[row][col] = formatInput(activeInputField.value);
-            calculateAverages();
+            state.coefficients[row][col] = formatInput(activeInputField.value);
+            calculateAll();
+            handleAutoFocus(row, col);
+        });
 
-            // Автоматический переход к следующему полю после ввода 3 символов (X.XX)
-            if (activeInputField.value.length === 4) {
-                if (col === 0) { // Игрок 1, переходим к Игроку 2
-                    const nextInput = document.getElementById(`player2_game${row + 5}`);
-                    if (nextInput) nextInput.focus();
-                } else if (col === 1) { // Игрок 2, переходим к Игроку 1 следующего гейма
-                    if (row < 5) {
-                        const nextInput = document.getElementById(`player1_game${row + 6}`);
-                        if (nextInput) nextInput.focus();
-                    } else { // Последнее поле, скрываем клавиатуру
-                        activeInputField.blur();
-                        virtualKeyboard.classList.add('hidden');
-                        activeInputField = null;
-                    }
+        document.addEventListener('click', (e) => {
+            if (activeInputField && !activeInputField.contains(e.target) {
+                activeInputField.blur();
+                elements.virtualKeyboard.classList.add('hidden');
+                activeInputField = null;
+            }
+        });
+    }
+
+    function handleInputValue(value, row, col) {
+        let currentVal = activeInputField.value;
+        if (currentVal.length === 1 && /[0-9]/.test(currentVal) && value !== '.' && !currentVal.includes('.')) {
+            activeInputField.value += '.' + value;
+        } else if (currentVal.length < 4) {
+            activeInputField.value += value;
+        }
+    }
+
+    function handleAutoFocus(row, col) {
+        if (activeInputField.value.length === 4) {
+            if (col === 0) {
+                const nextInput = document.getElementById(`player2_game${row + 5}`);
+                if (nextInput) nextInput.focus();
+            } else if (row < 5) {
+                const nextInput = document.getElementById(`player1_game${row + 6}`);
+                if (nextInput) nextInput.focus();
+            } else {
+                activeInputField.blur();
+                elements.virtualKeyboard.classList.add('hidden');
+                activeInputField = null;
+            }
+        }
+    }
+
+    function setupEventListeners() {
+        elements.aiToggle.addEventListener('change', (e) => {
+            state.aiEnabled = e.target.checked;
+            calculateAll();
+        });
+
+        elements.clearButton.addEventListener('click', clearData);
+    }
+
+    // Основные расчетные функции
+    function calculateAll() {
+        calculateAverages();
+        calculateGameStrengths();
+        detectKeyMoments();
+        if (state.aiEnabled) runAIAnalysis();
+        updateUI();
+    }
+
+    function calculateAverages() {
+        let totals = { player1: 0, player2: 0 };
+        let counts = { player1: 0, player2: 0 };
+
+        state.coefficients.forEach(([coeff1, coeff2]) => {
+            const num1 = parseFloat(coeff1);
+            const num2 = parseFloat(coeff2);
+
+            if (!isNaN(num1) {
+                totals.player1 += num1;
+                counts.player1++;
+            }
+            if (!isNaN(num2)) {
+                totals.player2 += num2;
+                counts.player2++;
+            }
+        });
+
+        state.averages.player1 = counts.player1 > 0 ? totals.player1 / counts.player1 : 0;
+        state.averages.player2 = counts.player2 > 0 ? totals.player2 / counts.player2 : 0;
+
+        const difference = Math.abs(state.averages.player1 - state.averages.player2);
+        state.predictions.total = difference <= 0.30 ? "ТБ 20.5" : "ТМ 20.5";
+        state.predictions.color = difference <= 0.30 ? "green" : "red";
+
+        const totalCoeff = state.averages.player1 + state.averages.player2;
+        const pointsPlayer1 = totalCoeff > 0 ? (state.averages.player1 / totalCoeff) * 21 : 0;
+        const pointsPlayer2 = totalCoeff > 0 ? (state.averages.player2 / totalCoeff) * 21 : 0;
+
+        state.predictions.smallestPoints = Math.min(pointsPlayer1, pointsPlayer2) || 0;
+        state.winner = state.averages.player1 < state.averages.player2 ? 1 : 
+                      state.averages.player2 < state.averages.player1 ? 2 : 0;
+    }
+
+    function calculateGameStrengths() {
+        state.gameStrengths = state.coefficients.map(([coeff1, coeff2], index) => {
+            const gameNum = index + 5;
+            const num1 = parseFloat(coeff1);
+            const num2 = parseFloat(coeff2);
+
+            if (isNaN(num1) || isNaN(num2)) return { player1: 0, player2: 0 };
+
+            // Вес гейма (W)
+            const W = 1 + 0.2 * Math.max(0, gameNum - 5);
+            
+            // Модификатор динамики (D)
+            const D1 = 1 + (state.winStreaks.player1 * 0.1);
+            const D2 = 1 + (state.winStreaks.player2 * 0.1);
+            
+            return {
+                player1: (num1 * W * D1).toFixed(2),
+                player2: (num2 * W * D2).toFixed(2)
+            };
+        });
+    }
+
+    function detectKeyMoments() {
+        state.gameComments = Array(6).fill("");
+
+        for (let i = 1; i < 6; i++) {
+            const prev1 = parseFloat(state.coefficients[i-1][0]);
+            const prev2 = parseFloat(state.coefficients[i-1][1]);
+            const curr1 = parseFloat(state.coefficients[i][0]);
+            const curr2 = parseFloat(state.coefficients[i][1]);
+
+            if (!isNaN(prev1) && !isNaN(prev2) && !isNaN(curr1) && !isNaN(curr2)) {
+                const change1 = Math.abs(curr1 - prev1);
+                const change2 = Math.abs(curr2 - prev2);
+
+                if (change1 > 0.40 || change2 > 0.40) {
+                    if (curr1 > prev1) state.gameComments[i] = "Игрок 1 теряет!";
+                    else if (curr2 > prev2) state.gameComments[i] = "Игрок 2 теряет!";
+                    else if (curr1 < prev1) state.gameComments[i] = "Игрок 1 усиливает!";
+                    else if (curr2 < prev2) state.gameComments[i] = "Игрок 2 усиливает!";
                 }
             }
         }
-    });
+    }
 
-    // Обработчик для скрытия клавиатуры при тапе вне полей ввода и клавиатуры
-    document.addEventListener('click', (e) => {
-        if (activeInputField && !activeInputField.contains(e.target) && !virtualKeyboard.contains(e.target)) {
-            // Убеждаемся, что клик был вне активного поля и вне клавиатуры
-            activeInputField.blur();
-            virtualKeyboard.classList.add('hidden');
-            activeInputField = null;
+    function runAIAnalysis() {
+        let scores = { player1: 0, player2: 0 };
+        let fluctuations = { player1: 0, player2: 0 };
+        let gainMoments = { player1: 0, player2: 0 };
+
+        for (let i = 1; i < 6; i++) {
+            const prev1 = parseFloat(state.coefficients[i-1][0]);
+            const prev2 = parseFloat(state.coefficients[i-1][1]);
+            const curr1 = parseFloat(state.coefficients[i][0]);
+            const curr2 = parseFloat(state.coefficients[i][1]);
+
+            if (!isNaN(prev1) && !isNaN(prev2) && !isNaN(curr1) && !isNaN(curr2)) {
+                if (Math.abs(curr1 - prev1) > 0.3) fluctuations.player1++;
+                if (Math.abs(curr2 - prev2) > 0.3) fluctuations.player2++;
+                if (curr1 < prev1) gainMoments.player1++;
+                if (curr2 < prev2) gainMoments.player2++;
+            }
         }
-    });
 
-    // Event listeners
-    aiToggle.addEventListener('change', (e) => {
-        aiEnabled = e.target.checked;
-        calculateAverages();
-    });
+        scores.player1 = (state.averages.player1 > 0 ? (1 / state.averages.player1) * 2 : 0) 
+                        - fluctuations.player1 * 0.5 + gainMoments.player1;
+        scores.player2 = (state.averages.player2 > 0 ? (1 / state.averages.player2) * 2 : 0) 
+                        - fluctuations.player2 * 0.5 + gainMoments.player2;
 
-    clearButton.addEventListener('click', clearData);
+        const totalScore = scores.player1 + scores.player2;
+        if (totalScore > 0) {
+            state.probabilities.player1 = Math.round((scores.player1 / totalScore) * 100);
+            state.probabilities.player2 = 100 - state.probabilities.player1;
+        }
 
-    // Initial setup
-    setupInputFields();
-    clearData(); // Вызываем clearData для инициализации всех полей пустыми
+        state.aiAnalysis = scores.player1 > scores.player2 
+            ? `🤖 Игрок 1: ${state.probabilities.player1}%` 
+            : scores.player2 > scores.player1 
+                ? `🤖 Игрок 2: ${state.probabilities.player2}%` 
+                : "🤖 Матч равный: 50/50";
+    }
+
+    function updateUI() {
+        // Основные показатели
+        elements.averagePlayer1.textContent = state.averages.player1.toFixed(2);
+        elements.averagePlayer2.textContent = state.averages.player2.toFixed(2);
+        elements.winner.textContent = state.winner === 1 ? "1" : state.winner === 2 ? "2" : "-";
+        elements.totalPrediction.textContent = state.predictions.total;
+        elements.totalPrediction.className = `prediction-text ${state.predictions.color}`;
+        elements.smallestPlayerPoints.textContent = state.predictions.smallestPoints.toFixed(2);
+        elements.aiAnalysis.textContent = state.aiAnalysis;
+        elements.aiAnalysis.style.display = state.aiEnabled ? 'block' : 'none';
+
+        // Обновление полей ввода и комментариев
+        state.coefficients.forEach(([coeff1, coeff2], i) => {
+            const player1Input = document.getElementById(`player1_game${i + 5}`);
+            const player2Input = document.getElementById(`player2_game${i + 5}`);
+            const commentEl = document.getElementById(`comment_game${i + 5}`);
+            const rowEl = document.getElementById(`row_game${i + 5}`);
+
+            if (player1Input) player1Input.value = coeff1;
+            if (player2Input) player2Input.value = coeff2;
+            if (commentEl) {
+                commentEl.textContent = state.gameComments[i];
+                rowEl.classList.toggle('highlight', state.gameComments[i] !== "");
+            }
+        });
+
+        // Обновление таблицы силы геймов
+        updateStrengthTable();
+    }
+
+    function updateStrengthTable() {
+        if (!elements.strengthTable) return;
+        
+        elements.strengthTable.innerHTML = `
+            <tr>
+                <th>Гейм</th>
+                <th>Сила Игрока 1</th>
+                <th>Сила Игрока 2</th>
+                <th>Отклонение</th>
+            </tr>
+            ${state.gameStrengths.map((strength, i) => {
+                const gameNum = i + 5;
+                const deviation1 = calculateDeviation(strength.player1, state.averages.player1);
+                const deviation2 = calculateDeviation(strength.player2, state.averages.player2);
+                
+                return `
+                <tr>
+                    <td>${gameNum}</td>
+                    <td>${strength.player1}</td>
+                    <td>${strength.player2}</td>
+                    <td style="color: ${getDeviationColor(deviation1)}">
+                        ${deviation1}% / ${deviation2}%
+                    </td>
+                </tr>
+                `;
+            }).join('')}
+        `;
+    }
+
+    function calculateDeviation(value, average) {
+        const numValue = parseFloat(value);
+        const numAverage = parseFloat(average);
+        return isNaN(numValue) || numAverage === 0 ? "0" : 
+            ((numAverage - numValue) / numAverage * 100).toFixed(1);
+    }
+
+    function getDeviationColor(deviation) {
+        const num = parseFloat(deviation);
+        if (num > 15) return '#2ecc71';
+        if (num > 5) return '#27ae60';
+        if (num < -15) return '#e74c3c';
+        if (num < -5) return '#c0392b';
+        return '#3498db';
+    }
+
+    function clearData() {
+        state.coefficients = Array.from({ length: 6 }, () => ["", ""]);
+        state.averages = { player1: 0, player2: 0 };
+        state.predictions = { total: "", color: "green", smallestPoints: 0 };
+        state.winner = 0;
+        state.gameComments = Array(6).fill("");
+        state.aiAnalysis = "";
+        state.probabilities = { player1: 50, player2: 50 };
+        state.gameStrengths = Array(6).fill({ player1: 0, player2: 0 });
+        updateUI();
+    }
+
+    // Вспомогательные функции
+    function formatInput(input) {
+        let formatted = input.replace(/[^0-9.]/g, '');
+        if (formatted.length === 1 && /[0-9]/.test(formatted)) formatted += ".";
+        if (formatted.length > 4) formatted = formatted.substring(0, 4);
+        if (formatted.startsWith('.')) formatted = '0' + formatted;
+        const parts = formatted.split('.');
+        if (parts.length > 2) formatted = parts[0] + '.' + parts.slice(1).join('');
+        return formatted;
+    }
+
+    // Запуск приложения
+    init();
 });
