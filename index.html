@@ -3,8 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Анализ Кф.</title>
+    <title>Анализ Кф. с силой геймов</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .strength-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .strength-table th, .strength-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+        .strength-table th {
+            background-color: #333;
+            color: white;
+        }
+        .strength-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .strength-table tr:nth-child(odd) {
+            background-color: #ddd;
+        }
+        .deviation-positive {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .deviation-negative {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .game-strength-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -27,9 +64,36 @@
         <h3 class="input-title">Коэфф. (5-10 гейм)</h3>
 
         <div class="input-grid">
-            </div>
+            <!-- Динамически генерируемые поля ввода -->
+        </div>
 
         <button id="clearButton" class="clear-button">Очистить</button>
+
+        <!-- Новый раздел для анализа силы геймов -->
+        <div class="game-strength-section">
+            <h3>Анализ силы геймов</h3>
+            <table class="strength-table" id="strengthTable">
+                <thead>
+                    <tr>
+                        <th>Гейм</th>
+                        <th>Сила Игрока 1</th>
+                        <th>Сила Игрока 2</th>
+                        <th>Отклонение</th>
+                        <th>Тенденция</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут заполняться через JavaScript -->
+                </tbody>
+            </table>
+            <div id="gameStrengthInsights" class="insights-box"></div>
+        </div>
+
+        <!-- График силы геймов (опционально) -->
+        <div class="game-strength-section">
+            <h3>Динамика силы по геймам</h3>
+            <canvas id="strengthChart" width="400" height="200"></canvas>
+        </div>
     </div>
 
     <div id="virtualKeyboard" class="virtual-keyboard hidden">
@@ -58,6 +122,60 @@
         </div>
     </div>
 
+    <!-- Подключаем Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
+    
+    <script>
+        // Инициализация графика (добавьте в ваш script.js)
+        let strengthChart = null;
+        
+        function initStrengthChart() {
+            const ctx = document.getElementById('strengthChart').getContext('2d');
+            strengthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Гейм 5', 'Гейм 6', 'Гейм 7', 'Гейм 8', 'Гейм 9', 'Гейм 10'],
+                    datasets: [
+                        {
+                            label: 'Сила Игрока 1',
+                            data: [],
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        },
+                        {
+                            label: 'Сила Игрока 2',
+                            data: [],
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.1,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Сила гейма'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Номер гейма'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Вызываем инициализацию при загрузке
+        document.addEventListener('DOMContentLoaded', initStrengthChart);
+    </script>
 </body>
 </html>
