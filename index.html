@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Теннисный анализатор</title>
+    <title>Теннисный анализатор коэффициентов</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -138,11 +138,65 @@
             cursor: pointer;
             margin-top: 4px;
         }
+        .player-analysis {
+            margin: 10px 0;
+            padding: 8px;
+            background: #252528;
+            border-radius: 5px;
+        }
+        .progress-container {
+            margin: 6px 0;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        .progress-bar {
+            height: 10px;
+            background: #3a3a3c;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+        }
+        .progress-fill.player1 {
+            background: #34c759;
+        }
+        .progress-fill.player2 {
+            background: #007aff;
+        }
+        .analysis-details {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .comparison-chart {
+            margin: 12px 0;
+            padding: 8px;
+            background: #252528;
+            border-radius: 5px;
+        }
+        .chart-bar {
+            display: flex;
+            height: 20px;
+            margin: 5px 0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .chart-player1 {
+            background: #34c759;
+        }
+        .chart-player2 {
+            background: #007aff;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Теннисный анализатор</h1>
+        <h1>Теннисный анализатор коэффициентов</h1>
         
         <h2>Прематч коэффициенты</h2>
         <table>
@@ -204,8 +258,46 @@
             <h2>Диагностика матча</h2>
             <div class="summary-item">Средняя сила Игрок 1: <span id="avgStrength1">0.00</span></div>
             <div class="summary-item">Средняя сила Игрок 2: <span id="avgStrength2">0.00</span></div>
+            
+            <div class="comparison-chart">
+                <div class="progress-label">
+                    <span>Игрок 1</span>
+                    <span>Игрок 2</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-player1" id="chartPlayer1" style="width:50%"></div>
+                    <div class="chart-player2" id="chartPlayer2" style="width:50%"></div>
+                </div>
+            </div>
+            
+            <div class="player-analysis">
+                <strong>Анализ Игрока 1</strong>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill player1" id="player1Progress" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="analysis-details" id="player1Details">
+                    Введите коэффициенты для анализа
+                </div>
+            </div>
+            
+            <div class="player-analysis">
+                <strong>Анализ Игрока 2</strong>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill player2" id="player2Progress" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="analysis-details" id="player2Details">
+                    Введите коэффициенты для анализа
+                </div>
+            </div>
+            
             <div class="summary-item">Прогноз: <span id="winnerPrediction">-</span></div>
             <div class="summary-item">Рекомендация: <span id="matchRecommendation">-</span></div>
+            <div class="summary-item">Вероятность Игрок 1: <span id="winProbability1">50%</span></div>
+            <div class="summary-item">Вероятность Игрок 2: <span id="winProbability2">50%</span></div>
         </div>
         
         <h2>Сила геймов</h2>
@@ -370,6 +462,19 @@
                     document.getElementById('avgStrength1').textContent = avgStrength1;
                     document.getElementById('avgStrength2').textContent = avgStrength2;
                     
+                    // Обновляем анализ игроков
+                    updatePlayerAnalysis(1, avgStrength1);
+                    updatePlayerAnalysis(2, avgStrength2);
+                    
+                    // Обновляем график сравнения
+                    const total = parseFloat(avgStrength1) + parseFloat(avgStrength2);
+                    const player1Width = (avgStrength1 / total * 100).toFixed(1);
+                    const player2Width = (avgStrength2 / total * 100).toFixed(1);
+                    
+                    document.getElementById('chartPlayer1').style.width = `${player1Width}%`;
+                    document.getElementById('chartPlayer2').style.width = `${player2Width}%`;
+                    
+                    // Прогноз победителя
                     if (avgStrength1 > avgStrength2) {
                         document.getElementById('winnerPrediction').textContent = 'Игрок 1';
                         document.getElementById('matchRecommendation').textContent = 'Ставка на Игрока 1';
@@ -380,7 +485,68 @@
                         document.getElementById('winnerPrediction').textContent = 'Не определен';
                         document.getElementById('matchRecommendation').textContent = 'Не рекомендуется';
                     }
+                    
+                    // Вероятности победы
+                    const totalProb = totalStrength1 + totalStrength2;
+                    const prob1 = (totalStrength1/totalProb * 100).toFixed(1);
+                    const prob2 = (totalStrength2/totalProb * 100).toFixed(1);
+                    
+                    document.getElementById('winProbability1').textContent = `${prob1}%`;
+                    document.getElementById('winProbability2').textContent = `${prob2}%`;
                 }
+            }
+            
+            // Анализ игрока
+            function updatePlayerAnalysis(playerNum, strength) {
+                const strengthValue = parseFloat(strength);
+                const progress = Math.min(100, Math.max(0, strengthValue));
+                
+                // Обновляем прогресс-бар
+                document.getElementById(`player${playerNum}Progress`).style.width = `${progress}%`;
+                
+                // Анализ силы
+                let analysis = "";
+                let formLevel = "";
+                
+                if (strengthValue > 70) {
+                    formLevel = "Отличная";
+                    analysis = "Игрок демонстрирует выдающуюся игру. Высокая вероятность победы. Коэффициенты стабильно низкие.";
+                } else if (strengthValue > 55) {
+                    formLevel = "Хорошая";
+                    analysis = "Игрок показывает стабильно хорошую игру. Достойные шансы на победу. Коэффициенты постепенно снижаются.";
+                } else if (strengthValue > 40) {
+                    formLevel = "Средняя";
+                    analysis = "Игрок в нестабильной форме. Возможны колебания в игре. Коэффициенты изменяются.";
+                } else {
+                    formLevel = "Слабая";
+                    analysis = "Игрок испытывает трудности. Низкая вероятность победы. Коэффициенты растут.";
+                }
+                
+                // Тренд (если есть предыдущие данные)
+                if (gameData.live.some(game => game[`player${playerNum}`])) {
+                    const lastGames = gameData.live.map(game => game[`player${playerNum}`]).filter(Boolean);
+                    if (lastGames.length > 1) {
+                        const lastTwoGames = lastGames.slice(-2);
+                        const trend = lastTwoGames[1] < lastTwoGames[0] ? "улучшается" : 
+                                     lastTwoGames[1] > lastTwoGames[0] ? "ухудшается" : "стабилен";
+                        
+                        analysis += `<br><br><strong>Тренд:</strong> ${trend}`;
+                        
+                        if (trend === "улучшается" && strengthValue > 55) {
+                            analysis += " - Благоприятная динамика для ставки";
+                        } else if (trend === "ухудшается" && strengthValue < 45) {
+                            analysis += " - Негативная динамика, избегайте ставок";
+                        }
+                    }
+                }
+                
+                // Добавляем анализ прематч коэффициентов
+                if (gameData.prematch[`player${playerNum}`]) {
+                    const prematchStrength = (1/gameData.prematch[`player${playerNum}`] * 100).toFixed(2);
+                    analysis += `<br><br><strong>Прематч сила:</strong> ${prematchStrength} (${strengthValue > parseFloat(prematchStrength) ? "улучшение" : "ухудшение"} по сравнению с началом матча)`;
+                }
+                
+                document.getElementById(`player${playerNum}Details`).innerHTML = `<strong>${formLevel} форма (${strengthValue}):</strong> ${analysis}`;
             }
             
             // Очистка данных
@@ -393,6 +559,16 @@
                 document.getElementById('avgStrength2').textContent = '0.00';
                 document.getElementById('winnerPrediction').textContent = '-';
                 document.getElementById('matchRecommendation').textContent = '-';
+                document.getElementById('winProbability1').textContent = '50%';
+                document.getElementById('winProbability2').textContent = '50%';
+                
+                document.getElementById('player1Progress').style.width = '0%';
+                document.getElementById('player2Progress').style.width = '0%';
+                document.getElementById('player1Details').textContent = 'Введите коэффициенты для анализа';
+                document.getElementById('player2Details').textContent = 'Введите коэффициенты для анализа';
+                
+                document.getElementById('chartPlayer1').style.width = '50%';
+                document.getElementById('chartPlayer2').style.width = '50%';
                 
                 gameData.prematch = { player1: null, player2: null };
                 gameData.live = Array.from({length: 6}, () => ({ player1: null, player2: null }));
