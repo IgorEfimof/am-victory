@@ -6,135 +6,143 @@
     <title>Теннисный анализатор</title>
     <style>
         * { box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, sans-serif; 
-            margin: 0; 
-            padding: 10px; 
-            background: #2c2c2e; 
-            color: #fff; 
-            -webkit-text-size-adjust: none; 
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            padding: 8px;
+            background: #2c2c2e;
+            color: #fff;
+            -webkit-text-size-adjust: none;
+            touch-action: pan-y;
         }
-        .container { 
-            width: 100%; 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: #1c1c1e; 
-            padding: 15px; 
-            border-radius: 10px; 
-            padding-bottom: 60px;
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1c1c1e;
+            padding: 12px;
+            border-radius: 8px;
+            padding-bottom: 50px;
         }
-        h1 { 
-            color: #007aff; 
-            font-size: 20px; 
-            margin: 0 0 10px; 
-            padding-bottom: 8px; 
-            border-bottom: 2px solid #007aff; 
+        h1 {
+            color: #007aff;
+            font-size: 18px;
+            margin: 0 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #007aff;
         }
-        h2 { 
-            color: #007aff; 
-            font-size: 16px; 
-            margin: 15px 0 8px; 
+        h2 {
+            color: #007aff;
+            font-size: 15px;
+            margin: 12px 0 6px;
         }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 10px 0; 
-            font-size: 14px; 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 13px;
         }
-        th { 
-            background: #007aff; 
-            color: white; 
-            padding: 8px; 
-            text-align: center; 
-            font-weight: bold; 
+        th {
+            background: #007aff;
+            color: white;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
         }
-        td { 
-            padding: 8px; 
-            border: 1px solid #3a3a3c; 
-            text-align: center; 
+        td {
+            padding: 6px;
+            border: 1px solid #3a3a3c;
+            text-align: center;
         }
         tr:nth-child(even) { background: #2c2c2e; }
-        .coeff-input { 
-            width: 70px; 
-            padding: 8px; 
-            border: 1px solid #3a3a3c; 
-            border-radius: 6px; 
-            text-align: center; 
-            background: #2c2c2e; 
-            color: white; 
-            font-size: 14px; 
+        .coeff-input {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #3a3a3c;
+            border-radius: 5px;
+            text-align: center;
+            background: #2c2c2e;
+            color: white;
+            font-size: 13px;
         }
         .trend-up { color: #34c759; font-weight: bold; }
         .trend-down { color: #ff3b30; font-weight: bold; }
         .trend-neutral { color: #ffcc00; }
-        .summary-box { 
-            background: #2c2c2e; 
-            padding: 12px; 
-            border-radius: 8px; 
-            margin: 15px 0; 
-            font-size: 14px; 
+        .summary-box {
+            background: #2c2c2e;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 13px;
         }
-        .summary-item { margin-bottom: 8px; }
-        .summary-item span { font-weight: bold; color: #007aff; }
-        .clear-button { 
-            background: #007aff; 
-            color: white; 
-            border: none; 
-            padding: 10px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin-top: 10px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            width: 100%; 
+        .summary-item {
+            margin-bottom: 6px;
+            line-height: 1.3;
         }
-        .importance { color: #ffcc00; font-size: 12px; }
-        .virtual-keyboard { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: #2c2c2e; 
-            padding: 10px; 
-            border-top: 1px solid #3a3a3c; 
-            z-index: 1000; 
-            display: none; 
+        .summary-item span {
+            font-weight: bold;
+            color: #007aff;
         }
-        .keyboard-row { display: flex; justify-content: center; margin-bottom: 5px; }
-        .key { 
-            background: #3a3a3c; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            width: 15%; 
-            max-width: 60px; 
-            height: 45px; 
-            margin: 0 2px; 
-            font-size: 18px; 
-            cursor: pointer; 
+        .clear-button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            width: 100%;
         }
-        .key-done { 
-            background: #007aff; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            height: 45px; 
-            padding: 0 20px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-top: 5px; 
+        .importance {
+            color: #ffcc00;
+            font-size: 11px;
         }
-        @media (max-width: 400px) {
-            .coeff-input { width: 60px; padding: 6px; font-size: 13px; }
-            td, th { padding: 6px; }
-            h2 { font-size: 15px; }
-            .key { height: 40px; font-size: 16px; }
+        .virtual-keyboard {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #2c2c2e;
+            padding: 8px;
+            border-top: 1px solid #3a3a3c;
+            z-index: 1000;
+            display: none;
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+        .key {
+            background: #3a3a3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 15%;
+            max-width: 55px;
+            height: 40px;
+            margin: 0 2px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .key-done {
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            height: 40px;
+            padding: 0 15px;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Теннисный анализатор коэффициентов</h1>
+        <h1>Теннисный анализатор</h1>
         
         <h2>Прематч коэффициенты</h2>
         <table>
@@ -146,49 +154,51 @@
         </table>
         
         <h2>Лайв коэффициенты</h2>
-        <table>
-            <thead>
-                <tr><th>Гейм</th><th>Игрок 1</th><th>Игрок 2</th><th>Тренд</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>5</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="5" data-player="1" placeholder="1.96" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="5" data-player="2" placeholder="1.75" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="6" data-player="1" placeholder="1.85" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="6" data-player="2" placeholder="1.85" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="7" data-player="1" placeholder="1.90" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="7" data-player="2" placeholder="1.80" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="8" data-player="1" placeholder="1.95" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="8" data-player="2" placeholder="1.75" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="9" data-player="1" placeholder="2.00" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="9" data-player="2" placeholder="1.70" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td><input type="text" class="coeff-input live-input" data-game="10" data-player="1" placeholder="2.10" readonly></td>
-                    <td><input type="text" class="coeff-input live-input" data-game="10" data-player="2" placeholder="1.65" readonly></td>
-                    <td class="game-trend">-</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr><th>Гейм</th><th>Игрок 1</th><th>Игрок 2</th><th>Тренд</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="5" data-player="1" placeholder="1.96" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="5" data-player="2" placeholder="1.75" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="6" data-player="1" placeholder="1.85" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="6" data-player="2" placeholder="1.85" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="7" data-player="1" placeholder="1.90" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="7" data-player="2" placeholder="1.80" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="8" data-player="1" placeholder="1.95" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="8" data-player="2" placeholder="1.75" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="9" data-player="1" placeholder="2.00" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="9" data-player="2" placeholder="1.70" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><input type="text" class="coeff-input live-input" data-game="10" data-player="1" placeholder="2.10" readonly></td>
+                        <td><input type="text" class="coeff-input live-input" data-game="10" data-player="2" placeholder="1.65" readonly></td>
+                        <td class="game-trend">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         
         <div class="summary-box">
             <h2>Диагностика матча</h2>
@@ -196,24 +206,24 @@
             <div class="summary-item">Средняя сила Игрок 2: <span id="avgStrength2">0.00</span></div>
             <div class="summary-item">Прогноз: <span id="winnerPrediction">-</span></div>
             <div class="summary-item">Рекомендация: <span id="matchRecommendation">-</span></div>
-            <div class="summary-item">Вероятность Игрок 1: <span id="winProbability1">50%</span></div>
-            <div class="summary-item">Вероятность Игрок 2: <span id="winProbability2">50%</span></div>
         </div>
         
         <h2>Сила геймов</h2>
-        <table>
-            <thead>
-                <tr><th>Гейм</th><th>Игрок 1</th><th>Игрок 2</th><th>Важность</th></tr>
-            </thead>
-            <tbody id="strengthTableBody">
-                <tr><td>5</td><td id="strength5-1">0.00</td><td id="strength5-2">0.00</td><td class="importance">★☆☆☆☆</td></tr>
-                <tr><td>6</td><td id="strength6-1">0.00</td><td id="strength6-2">0.00</td><td class="importance">★☆☆☆☆</td></tr>
-                <tr><td>7</td><td id="strength7-1">0.00</td><td id="strength7-2">0.00</td><td class="importance">★★☆☆☆</td></tr>
-                <tr><td>8</td><td id="strength8-1">0.00</td><td id="strength8-2">0.00</td><td class="importance">★★★☆☆</td></tr>
-                <tr><td>9</td><td id="strength9-1">0.00</td><td id="strength9-2">0.00</td><td class="importance">★★★★☆</td></tr>
-                <tr><td>10</td><td id="strength10-1">0.00</td><td id="strength10-2">0.00</td><td class="importance">★★★★★</td></tr>
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr><th>Гейм</th><th>Игрок 1</th><th>Игрок 2</th><th>Важность</th></tr>
+                </thead>
+                <tbody id="strengthTableBody">
+                    <tr><td>5</td><td id="strength5-1">0.00</td><td id="strength5-2">0.00</td><td class="importance">★☆☆☆☆</td></tr>
+                    <tr><td>6</td><td id="strength6-1">0.00</td><td id="strength6-2">0.00</td><td class="importance">★☆☆☆☆</td></tr>
+                    <tr><td>7</td><td id="strength7-1">0.00</td><td id="strength7-2">0.00</td><td class="importance">★★☆☆☆</td></tr>
+                    <tr><td>8</td><td id="strength8-1">0.00</td><td id="strength8-2">0.00</td><td class="importance">★★★☆☆</td></tr>
+                    <tr><td>9</td><td id="strength9-1">0.00</td><td id="strength9-2">0.00</td><td class="importance">★★★★☆</td></tr>
+                    <tr><td>10</td><td id="strength10-1">0.00</td><td id="strength10-2">0.00</td><td class="importance">★★★★★</td></tr>
+                </tbody>
+            </table>
+        </div>
         
         <button id="clearButton" class="clear-button">Очистить данные</button>
     </div>
@@ -253,21 +263,16 @@
                 live: Array.from({length: 6}, () => ({ player1: null, player2: null }))
             };
             
-            // Инициализация обработчиков ввода
+            // Показываем клавиатуру при фокусе на поле ввода
             document.querySelectorAll('.coeff-input').forEach(input => {
                 input.addEventListener('focus', function(e) {
                     e.preventDefault();
                     activeInput = this;
                     keyboard.style.display = 'block';
-                    setTimeout(() => {
-                        keyboard.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                    }, 100);
                 });
-                
-                input.addEventListener('input', updateCalculations);
             });
             
-            // Обработка клавиатуры
+            // Обработка нажатий на клавиатуре
             document.querySelectorAll('.key, .key-done').forEach(button => {
                 button.addEventListener('click', function() {
                     const value = this.dataset.value;
@@ -290,23 +295,23 @@
                             const currentIndex = allInputs.indexOf(activeInput);
                             if (currentIndex < allInputs.length - 1) {
                                 allInputs[currentIndex + 1].focus();
+                            } else {
+                                keyboard.style.display = 'none';
+                                activeInput.blur();
+                                activeInput = null;
                             }
                         }
                     }
                     
-                    // Обновляем данные и расчеты
-                    updateGameData();
                     updateCalculations();
                 });
             });
             
             // Обновление данных игры
             function updateGameData() {
-                // Прематч коэффициенты
                 gameData.prematch.player1 = parseFloat(document.getElementById('prematchPlayer1').value) || null;
                 gameData.prematch.player2 = parseFloat(document.getElementById('prematchPlayer2').value) || null;
                 
-                // Лайв коэффициенты
                 for (let i = 5; i <= 10; i++) {
                     const idx = i - 5;
                     gameData.live[idx].player1 = parseFloat(document.querySelector(`.live-input[data-game="${i}"][data-player="1"]`).value) || null;
@@ -318,21 +323,19 @@
             function updateCalculations() {
                 updateGameData();
                 
-                // 1. Расчет силы геймов
+                // Расчет силы геймов и трендов
                 for (let i = 5; i <= 10; i++) {
                     const idx = i - 5;
                     const p1 = gameData.live[idx].player1;
                     const p2 = gameData.live[idx].player2;
                     
                     if (p1 && p2) {
-                        // Сила = (1/коэффициент) * 100
                         const strength1 = (1/p1 * 100).toFixed(2);
                         const strength2 = (1/p2 * 100).toFixed(2);
                         
                         document.getElementById(`strength${i}-1`).textContent = strength1;
                         document.getElementById(`strength${i}-2`).textContent = strength2;
                         
-                        // Расчет тренда (сравнение с предыдущим геймом)
                         if (idx > 0 && gameData.live[idx-1].player1 && gameData.live[idx-1].player2) {
                             const prev1 = gameData.live[idx-1].player1;
                             const prev2 = gameData.live[idx-1].player2;
@@ -341,25 +344,12 @@
                             const trend2 = p2 < prev2 ? '↑' : p2 > prev2 ? '↓' : '→';
                             
                             const trendElement = document.querySelector(`.live-input[data-game="${i}"][data-player="1"]`).parentNode.nextElementSibling.nextElementSibling;
-                            trendElement.innerHTML = `1${trend1} / 2${trend2}`;
-                            
-                            // Добавляем классы для стилизации
-                            trendElement.querySelectorAll('span').forEach(s => s.remove());
-                            const span1 = document.createElement('span');
-                            span1.textContent = `1${trend1}`;
-                            span1.className = trend1 === '↑' ? 'trend-up' : trend1 === '↓' ? 'trend-down' : 'trend-neutral';
-                            
-                            const span2 = document.createElement('span');
-                            span2.textContent = ` / 2${trend2}`;
-                            span2.className = trend2 === '↑' ? 'trend-up' : trend2 === '↓' ? 'trend-down' : 'trend-neutral';
-                            
-                            trendElement.appendChild(span1);
-                            trendElement.appendChild(span2);
+                            trendElement.innerHTML = `<span class="${trend1 === '↑' ? 'trend-up' : trend1 === '↓' ? 'trend-down' : 'trend-neutral'}">1${trend1}</span> <span class="${trend2 === '↑' ? 'trend-up' : trend2 === '↓' ? 'trend-down' : 'trend-neutral'}">2${trend2}</span>`;
                         }
                     }
                 }
                 
-                // 2. Расчет средней силы
+                // Расчет средней силы и прогноза
                 let totalStrength1 = 0;
                 let totalStrength2 = 0;
                 let count = 0;
@@ -380,7 +370,6 @@
                     document.getElementById('avgStrength1').textContent = avgStrength1;
                     document.getElementById('avgStrength2').textContent = avgStrength2;
                     
-                    // 3. Прогноз победителя
                     if (avgStrength1 > avgStrength2) {
                         document.getElementById('winnerPrediction').textContent = 'Игрок 1';
                         document.getElementById('matchRecommendation').textContent = 'Ставка на Игрока 1';
@@ -391,14 +380,6 @@
                         document.getElementById('winnerPrediction').textContent = 'Не определен';
                         document.getElementById('matchRecommendation').textContent = 'Не рекомендуется';
                     }
-                    
-                    // 4. Вероятности победы
-                    const total = totalStrength1 + totalStrength2;
-                    const prob1 = (totalStrength1/total * 100).toFixed(1);
-                    const prob2 = (totalStrength2/total * 100).toFixed(1);
-                    
-                    document.getElementById('winProbability1').textContent = `${prob1}%`;
-                    document.getElementById('winProbability2').textContent = `${prob2}%`;
                 }
             }
             
@@ -412,10 +393,7 @@
                 document.getElementById('avgStrength2').textContent = '0.00';
                 document.getElementById('winnerPrediction').textContent = '-';
                 document.getElementById('matchRecommendation').textContent = '-';
-                document.getElementById('winProbability1').textContent = '50%';
-                document.getElementById('winProbability2').textContent = '50%';
                 
-                // Сброс данных
                 gameData.prematch = { player1: null, player2: null };
                 gameData.live = Array.from({length: 6}, () => ({ player1: null, player2: null }));
             });
